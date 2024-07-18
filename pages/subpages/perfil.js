@@ -1,13 +1,19 @@
 // pages/subpages/perfil.js
 
-import * as React from 'react';
-import { View, Text } from 'react-native';
+import React, {useContext}from 'react';
+import { View, Text , TouchableOpacity} from 'react-native';
+import LogoutIcon from 'react-native-vector-icons/Ionicons';
+import { AuthContext } from '../../context/AuthContext';
 
 const Perfil = () => {
+  const{logout} = useContext(AuthContext);
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Perfil Screen</Text>
-    </View>
+    <TouchableOpacity onPress={()=>{logout()}} style={{paddingVertical:15}}>
+      <View style={{flexDirectio:'row', alignItems: 'center', marginTop:50}}>
+        <LogoutIcon name='exit-outline' size={22}/>
+        <Text style={{fontSize:15, marginLeft:5,}}>sign out</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 

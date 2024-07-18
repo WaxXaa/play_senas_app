@@ -2,20 +2,16 @@
 
 import * as React from 'react';
 import { View, Text} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 
-import AppStack from './navegation/appStack.js'
-import AuthStack from './navegation/authStack.js'
+import {AuthProvider} from './context/AuthContext.js'
+import AppNav from './navegation/appNav.js'
 
 
 function App() {
   return (
-    <NavigationContainer>
-      <StatusBar style='auto '/>
-        {/* <AppStack /> */}
-        <AuthStack />
-    </NavigationContainer>
+    <AuthProvider>
+      <AppNav />
+    </AuthProvider>
   );
 }
 

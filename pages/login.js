@@ -1,9 +1,12 @@
 import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity} from 'react-native'
-import React from 'react'
+import React, {useContext}from 'react'
 import EmailIcon from 'react-native-vector-icons/MaterialIcons';
 import PasswordIcon from 'react-native-vector-icons/Feather';
+import { AuthContext } from '../context/AuthContext';
 
 const Login = (props) => {
+  const{login} = useContext(AuthContext);
+
   return (
     <SafeAreaView style={{flex:1,justifyContent:'center'}}>
       <View style={{paddingHorizontal:25}}>
@@ -21,6 +24,8 @@ const Login = (props) => {
             }}>
             Login
         </Text>
+
+
         <View style={{
             flexDirection:'row',
             borderBottomColor: '#ccc',
@@ -64,7 +69,7 @@ const Login = (props) => {
         </View>
 
         <TouchableOpacity 
-            onPress={()=>{}} 
+            onPress={()=>{login()}} 
             style={{
                 backgroundColor:'#8CDE9C', 
                 padding:20,
