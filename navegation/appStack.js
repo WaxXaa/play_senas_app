@@ -6,6 +6,7 @@ import { CardStyleInterpolators } from '@react-navigation/stack';
 import HomeScreen from '../pages/home.js'
 import Detail from '../pages/detail.js';
 import UserPerfil from '../pages/userPerfil.js';
+import EditarPerfil from '../pages/subpages/editarPerfil.js'
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ const AppStack = () => {
               />
             <Stack.Screen name="Detail" component={Detail} />
             <Stack.Screen name="UserPerfil" component={UserPerfil} />
+            <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
           </Stack.Navigator>
       );
 }
