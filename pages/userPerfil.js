@@ -1,50 +1,55 @@
-import React, { useEffect } from 'react';
-import { Text, View, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { Modal, Text, View, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons for the close icon
 
-export default function UserPerfil({ navigation, route }) {
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: route.params.name,
-      headerStyle: {
-        backgroundColor: '#3A3B3C', // Dark background for the header
-      },
-      headerTintColor: '#fff', // Light color for header text
-    });
-  }, [navigation, route.params.name]);
-
+export default function UserPerfil({ modalVisible, setModalVisible, user }) {
   return (
-    <View style={styles.container}>
-      <View style={styles.topSection}>
-        <View style={styles.propicArea}>
-          <Image source={route.params.image} style={styles.propic} />
+    <Modal
+      visible={modalVisible}
+      animationType="fade"
+      transparent={true}
+      onRequestClose={() => setModalVisible(false)}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.topSection}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setModalVisible(false)}
+          >
+            <Icon name="close" size={30} color="#fff" />
+          </TouchableOpacity>
+          <View style={styles.propicArea}>
+            <Image source={user.image} style={styles.propic} />
+          </View>
+          <Text style={styles.name}>{user.name} {user.apellido}</Text>
+          <Text style={styles.experience}>Experiencia: {user.exp}</Text>
         </View>
-        <Text style={styles.name}>{route.params.name} {route.params.apellido}</Text>
-        <Text style={styles.experience}>Experiencia: {route.params.exp}</Text>
       </View>
-      
-    </View>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     flex: 1,
-    backgroundColor: '#f4f4f4', // Light background color for the whole screen
-  },
-  topSection: {
-    height: Dimensions.get('window').height * 0.4, // Responsive height
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2A2B2C', // Dark background for the top section
-    borderBottomLeftRadius: 40, // More rounded corners
-    borderBottomRightRadius: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
+  topSection: {
+    width: '90%',
+    maxHeight: Dimensions.get('window').height * 0.6, // Max height for the modal content
+    backgroundColor: '#2A2B2C',
+    borderRadius: 20,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 15,
     elevation: 12,
-    padding: 20,
-    position: 'relative', // Ensure the button is positioned correctly
+    position: 'relative', // Ensure the close button is positioned correctly
   },
   propicArea: {
     width: 180,
@@ -66,7 +71,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 34,
-    color: '#fff', // White text for contrast
+    color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -77,27 +82,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: 'center',
   },
-  editButton: {
+  closeButton: {
     position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-    backgroundColor: '#FFBB3B',
-    paddingVertical: 12,
-    borderRadius: 25,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  editButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 10,
+    top: 10,
+    right: 10,
+    backgroundColor: 'transparent',
+    padding: 10,
   },
 });

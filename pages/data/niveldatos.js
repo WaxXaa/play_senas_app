@@ -19,7 +19,7 @@ export const questionsData = {
         ],
         2: [
           { text: '¿numero 2-1?', type: 'trueFalse' },
-          { text: '¿numero 2-2?', options: ['E', 'I', 'O', 'H'], type: 'multipleChoice' },
+          { text: '¿numero 2-2?', options: ['E', 'I', 'O', 'H'], type: 'multipleChoice'},
         ],
         // Agrega más preguntas para otros lecciones
       },

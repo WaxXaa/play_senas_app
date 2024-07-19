@@ -1,17 +1,22 @@
-// pages/subpages/ranking.js
-
-import * as React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Dimensions, StyleSheet, Image, TouchableWithoutFeedback, SafeAreaView } from 'react-native';
 import RefreshListView from 'react-native-refresh-list-view';
 import { userList } from '../data/userList';
+import UserPerfil from '../userPerfil.js'; // Import the UserPerfil component
 
 const Ranking = (props) => {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+
     const sortedUserList = [...userList].sort((a, b) => b.exp - a.exp);
 
     const renderUserItem = ({ item, index }) => (
         <TouchableWithoutFeedback
             key={index}
-            onPress={() => props.navigation.navigate({ name: 'UserPerfil', params: item })}
+            onPress={() => {
+                setSelectedUser(item);
+                setModalVisible(true);
+            }}
         >
             <View style={styles.itemContainer}>
                 <View style={styles.rankContainer}>
@@ -30,7 +35,7 @@ const Ranking = (props) => {
     );
 
     return (
-        <SafeAreaView style={{flex:1, backgroundColor:'#fff'}}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
             <View style={styles.headerContainer}>
                 <Text style={styles.headerText}>TOP JUGADORES</Text>
             </View>
@@ -38,6 +43,13 @@ const Ranking = (props) => {
                 data={sortedUserList}
                 renderItem={renderUserItem}
             />
+            {selectedUser && (
+                <UserPerfil
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    user={selectedUser}
+                />
+            )}
         </SafeAreaView>
     );
 };
