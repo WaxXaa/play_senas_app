@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import  ActionSheet from 'react-native-actionsheet';
+import ActionSheet from 'react-native-actionsheet';
 
 const EditarPerfil = ({ route, navigation }) => {
   const { firstName, lastName, avatar, onSave } = route.params;
@@ -18,7 +18,7 @@ const EditarPerfil = ({ route, navigation }) => {
   const handleImagePicker = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'We need permission to access your photo library.');
+      Alert.alert('Permiso requerido', 'Necesitamos permiso para acceder a tu galería de fotos.');
       return;
     }
 
@@ -32,15 +32,14 @@ const EditarPerfil = ({ route, navigation }) => {
     if (!result.canceled) {
       setUpdatedAvatar(result.assets[0].uri);
     } else {
-      Alert.alert('No image selected', 'You did not select any image.');
+      Alert.alert('No se seleccionó ninguna imagen', 'No seleccionaste ninguna imagen.');
     }
   };
 
-  // 处理拍照
   const handleCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'We need permission to access your camera.');
+      Alert.alert('Permiso requerido', 'Necesitamos permiso para acceder a tu cámara.');
       return;
     }
 
@@ -53,14 +52,14 @@ const EditarPerfil = ({ route, navigation }) => {
     if (!result.canceled) {
       setUpdatedAvatar(result.assets[0].uri);
     } else {
-      Alert.alert('No se capturó ninguna imagen', 'No has capturado ninguna imagen');
+      Alert.alert('No se capturó ninguna imagen', 'No has capturado ninguna imagen.');
     }
   };
 
   const handleSave = () => {
     onSave(updatedFirstName, updatedLastName, updatedAvatar);
     navigation.goBack();
-    Alert.alert('Guardado', 'Perfil cambiado con exito!', [
+    Alert.alert('Guardado', 'Perfil cambiado con éxito!', [
       { text: 'OK' }
     ]);
   };
@@ -79,7 +78,7 @@ const EditarPerfil = ({ route, navigation }) => {
         style={styles.input}
         value={updatedFirstName}
         onChangeText={setUpdatedFirstName}
-        placeholder="Enter your first name"
+        placeholder="Ingresa tu nombre"
       />
 
       <Text style={styles.label}>Apellido:</Text>
@@ -87,13 +86,12 @@ const EditarPerfil = ({ route, navigation }) => {
         style={styles.input}
         value={updatedLastName}
         onChangeText={setUpdatedLastName}
-        placeholder="Enter your last name"
+        placeholder="Ingresa tu apellido"
       />
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>Guardar cambios</Text>
       </TouchableOpacity>
-
 
       <ActionSheet
         ref={actionSheetRef}
@@ -116,11 +114,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f9f9f9',
   },
   topSection: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
   },
   propicArea: {
     width: 150,
@@ -129,7 +127,7 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: '#FFBB3B',
     overflow: 'hidden',
-    marginBottom: 10,
+    marginBottom: 15,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -138,26 +136,26 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   name: {
-    fontSize: 32,
-    color: 'black',
+    fontSize: 28,
+    color: '#333',
+    fontWeight: 'bold',
   },
   label: {
     fontSize: 16,
     color: '#333',
-    marginVertical: 5,
+    marginVertical: 10,
   },
   input: {
-    height: 40,
+    height: 45,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 10,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    marginBottom: 20,
     backgroundColor: '#fff',
   },
   saveButton: {
-    backgroundColor: '#8CDE9C',
-    marginTop:20,
+    backgroundColor: '#4CAF50',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',

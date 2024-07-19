@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, SafeAreaView, ToastAndroid } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, SafeAreaView } from 'react-native';
 import LogoutIcon from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../../context/AuthContext';
+import MaterialIcons from 'react-native-vector-icons/Feather';
 
 const Perfil = ({ navigation }) => {
   const { logout } = useContext(AuthContext);
@@ -44,22 +45,16 @@ const Perfil = ({ navigation }) => {
         <View style={styles.buttonList}>
           <TouchableOpacity style={styles.buttonSection} onPress={handleEditProfile}>
             <View style={styles.buttonArea}>
-              <View style={styles.iconArea}>
-                <LogoutIcon name='create-outline' size={30} style={styles.iconStyle} resizeMode="contain" />
-              </View>
+              <MaterialIcons name='edit' size={24} style={styles.iconStyle} />
               <Text style={styles.buttonName}>Editar Perfil</Text>
             </View>
-            <View style={styles.sp}></View>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.buttonSection} onPress={handleLogout}>
             <View style={styles.buttonArea}>
-              <View style={styles.iconArea}>
-                <LogoutIcon name='exit-outline' size={30} style={styles.iconStyle} resizeMode="contain" />
-              </View>
+              <LogoutIcon name='exit-outline' size={24} style={styles.iconStyle} />
               <Text style={styles.buttonName}>Logout</Text>
             </View>
-            <View style={styles.sp}></View>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -70,7 +65,7 @@ const Perfil = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF', // White background color
   },
   safeArea: {
     flex: 1,
@@ -79,63 +74,66 @@ const styles = StyleSheet.create({
     height: 300,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FFBB3B',
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+    paddingBottom: 30,
   },
   propicArea: {
     width: 170,
     height: 170,
     borderRadius: 85,
-    borderWidth: 4,
-    borderColor: '#FFBB3B'
+    borderWidth: 5,
+    borderColor: '#FFF',
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
   },
   propic: {
     borderRadius: 85,
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   name: {
     marginTop: 20,
-    color: 'black',
+    color: '#FFF',
     fontSize: 32,
+    fontWeight: 'bold',
   },
   experience: {
-    color: '#FFBB3B',
+    color: '#FFF',
     fontSize: 18,
   },
   buttonList: {
     marginTop: 20,
+    paddingHorizontal: 20,
   },
   buttonSection: {
-    paddingTop: 10,
-    paddingBottom: 5,
-    paddingLeft: 25,
-    paddingRight: 25,
+    paddingVertical: 10,
+    marginBottom: 10,
+    backgroundColor: '#3A3B3C', // Dark button background
+    borderRadius: 10,
+    elevation: 3, // for Android shadow
+    shadowColor: '#000', // for iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
   },
   buttonArea: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-  },
-  iconArea: {
-    marginLeft: 20,
-    width: 40,
-    height:40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 15,
   },
   iconStyle: {
-    color:'black',
+    color: '#FFBB3B', // Yellow icon color
   },
   buttonName: {
-    width: 270,
-    fontSize: 20,
-    color: 'black',
-    marginLeft:20,
+    fontSize: 18,
+    color: '#FFF', // White text color
+    marginLeft: 15,
   },
-  sp: {
-    marginTop: 10,
-    height: 2,
-    backgroundColor: 'black'
-  }
 });
 
 export default Perfil;
