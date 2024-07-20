@@ -21,40 +21,81 @@ const EditarPerfil = ({ route, navigation }) => {
       Alert.alert('Permiso requerido', 'Necesitamos permiso para acceder a tu galería de fotos.');
       return;
     }
-
+  
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
+  
     if (!result.canceled) {
-      setUpdatedAvatar(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      const fileType = uri.split('.').pop();
+      const newfile = {
+        uri,
+        type: `image/${fileType}`,
+        name: `photo.${fileType}`
+      };
+      handleUpload(newfile);
     } else {
       Alert.alert('No se seleccionó ninguna imagen', 'No seleccionaste ninguna imagen.');
     }
   };
-
+  
   const handleCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permiso requerido', 'Necesitamos permiso para acceder a tu cámara.');
       return;
     }
-
+  
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
+  
     if (!result.canceled) {
-      setUpdatedAvatar(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      const fileType = uri.split('.').pop(); 
+      const newfile = {
+        uri,
+        type: `image/${fileType}`,
+        name: `photo.${fileType}`
+      };
+      handleUpload(newfile);
     } else {
       Alert.alert('No se capturó ninguna imagen', 'No has capturado ninguna imagen.');
     }
   };
+  
+
+  const handleUpload = (image) => {
+    const formData = new FormData();
+    formData.append('file', image);
+    formData.append('upload_preset', 'freddy_pan');
+    
+    fetch("https://api.cloudinary.com/v1_1/dohyqqpyb/image/upload", {
+      method: 'POST',
+      body: formData,
+    })
+    .then(res => res.json())
+    .then(result => {
+      console.log(result);
+      if (result.secure_url) {
+        setUpdatedAvatar(result.secure_url);
+        Alert.alert('Éxito', 'Imagen subida con éxito.');
+      } else {
+        Alert.alert('Error', 'Hubo un problema al subir la imagen.');
+      }
+    })
+    .catch(error => {
+      console.error('Upload error:', error);
+      Alert.alert('Error', `Hubo un error al subir la imagen: ${error.message}`);
+    });
+  };
+  
 
   const handleSave = () => {
     onSave(updatedFirstName, updatedLastName, updatedAvatar);
@@ -87,6 +128,14 @@ const EditarPerfil = ({ route, navigation }) => {
         value={updatedLastName}
         onChangeText={setUpdatedLastName}
         placeholder="Ingresa tu apellido"
+      />
+
+      <Text style={styles.label}>uri:</Text>
+      <TextInput
+        style={styles.input}
+        value={updatedAvatar}
+        onChangeText={setUpdatedFirstName}
+        placeholder="Ingresa tu nombre"
       />
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>

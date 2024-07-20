@@ -1,5 +1,5 @@
 // In App.js in a new project
-
+import 'expo-dev-client';
 import * as React from 'react';
 import { View, Text} from 'react-native';
 
