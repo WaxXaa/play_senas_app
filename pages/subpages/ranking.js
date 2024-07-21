@@ -1,14 +1,36 @@
-import React, { useState } from 'react';
-import { View, Text, Dimensions, StyleSheet, Image, TouchableWithoutFeedback, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Dimensions, StyleSheet, Image, TouchableWithoutFeedback, SafeAreaView, ActivityIndicator } from 'react-native';
 import RefreshListView from 'react-native-refresh-list-view';
-import { userList } from '../data/userList';
 import UserPerfil from '../userPerfil.js'; // Import the UserPerfil component
 
 const Ranking = (props) => {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
 
-    const sortedUserList = [...userList].sort((a, b) => b.exp - a.exp);
+    useEffect(() => {
+        fetch(`http://192.168.0.4:8080/Ranking`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const formattedData = data.map(user => ({
+                    ...user,
+                    image: { uri: user.fotoPerfil }
+                }));
+                setData(formattedData);
+                setLoading(false);
+            })
+            .catch(error => {
+                setError(error);
+                setLoading(false);
+            });
+    }, []);
 
     const renderUserItem = ({ item, index }) => (
         <TouchableWithoutFeedback
@@ -27,12 +49,28 @@ const Ranking = (props) => {
                     source={item.image}
                 />
                 <View style={styles.textContainer}>
-                    <Text style={styles.name}>{item.name} {item.apellido}</Text>
+                    <Text style={styles.name}>{item.nombre} {item.apellido}</Text>
                     <Text style={styles.experience}>{item.exp} EXP</Text>
                 </View>
             </View>
         </TouchableWithoutFeedback>
     );
+
+    if (loading) {
+        return (
+            <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </SafeAreaView>
+        );
+    }
+
+    if (error) {
+        return (
+            <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ color: 'red' }}>Error fetching data: {error.message}</Text>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -40,8 +78,9 @@ const Ranking = (props) => {
                 <Text style={styles.headerText}>TOP JUGADORES</Text>
             </View>
             <RefreshListView
-                data={sortedUserList}
+                data={data}
                 renderItem={renderUserItem}
+                keyExtractor={item => item.id.toString()}
             />
             {selectedUser && (
                 <UserPerfil

@@ -14,7 +14,7 @@ const Aprender = (props) => {
                 title: item.title,
                 image: item.image,
                 desc: item.desc,
-                theme: item.theme // 确保传递 theme
+                theme: item.theme 
             })}
         >
             <View>

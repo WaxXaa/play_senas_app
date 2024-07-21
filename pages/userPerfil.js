@@ -21,7 +21,7 @@ export default function UserPerfil({ modalVisible, setModalVisible, user }) {
           <View style={styles.propicArea}>
             <Image source={user.image} style={styles.propic} />
           </View>
-          <Text style={styles.name}>{user.name} {user.apellido}</Text>
+          <Text style={styles.name}>{user.nombre} {user.apellido}</Text>
           <Text style={styles.experience}>Experiencia: {user.exp}</Text>
         </View>
       </View>

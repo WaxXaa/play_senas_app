@@ -1,11 +1,26 @@
-import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import React, { useContext } from 'react';
+import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useContext, useState, useEffect } from 'react';
 import EmailIcon from 'react-native-vector-icons/MaterialIcons';
 import PasswordIcon from 'react-native-vector-icons/Feather';
 import { AuthContext } from '../context/AuthContext';
 
 const Login = (props) => {
-  const { login } = useContext(AuthContext);
+  const { login, userToken, isLoading } = useContext(AuthContext);
+  const [correo, setCorreo] = useState('');
+  const [contra, setContra] = useState('');
+
+  useEffect(() => {
+    if (userToken) {
+      props.navigation.navigate('Home');
+    }
+  }, [userToken, props.navigation]);
+
+  const handleLogin = () => {
+    login(correo, contra)
+      .catch(() => {
+        Alert.alert("Login Error", "Correo o contraseña incorrectos.");
+      });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,6 +44,8 @@ const Login = (props) => {
             placeholder='Email ID'
             style={styles.input}
             keyboardType='email-address'
+            value={correo}
+            onChangeText={(text) => setCorreo(text)}
           />
         </View>
 
@@ -43,14 +60,17 @@ const Login = (props) => {
             placeholder='Password'
             style={styles.input}
             secureTextEntry={true}
+            value={contra}
+            onChangeText={(text) => setContra(text)}
           />
         </View>
 
         <TouchableOpacity 
-          onPress={() => { login() }} 
+          onPress={handleLogin} 
           style={styles.button}
+          disabled={isLoading}
         >
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>{isLoading ? 'Loading...' : 'Login'}</Text>
         </TouchableOpacity>
         
         <View style={styles.footer}>

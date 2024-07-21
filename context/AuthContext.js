@@ -6,39 +6,77 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
 
-  const login = ()=>{
-     setIsLoading(true);
-     setUserToken('hola');
-     AsyncStorage.setItem('userToken','hola');
-     setIsLoading(false);
-  }
-
-  const logout = ()=>{
-      setIsLoading(true);
-      setUserToken(null);
-      AsyncStorage.removeItem('userToken'); 
-      setIsLoading(false);
-  }
-
-  const isLoggedIn = async() =>{
+  const login = async (correo, contra) => {
+   setIsLoading(true);
+ 
    try {
-      setIsLoading(true);
-      let userToken1 = await AsyncStorage.getItem('userToken');
-      setUserToken(userToken1);
-      setIsLoading(false);
+     const response = await fetch('http://192.168.0.4:8080/users/login', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify({ email: correo, contra }), 
+     });
+ 
+     if (response.ok) {
+       const data = await response.json(); 
+       console.log("Response data:", data);
+ 
+         const userInfo = { id: data.id, correo, nombre: data.nombre, apellido: data.apellido, contra: contra,tipo: data.tipo,exp: data.exp };
+         setUserInfo(userInfo);
+         setUserToken(data.id); 
+         await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+         await AsyncStorage.setItem('userToken', data.id.toString());
+     } else {
+       const errorData = await response.json();
+       alert(errorData.message || "Correo o contraseña incorrectos");
+     }
    } catch (e) {
-      console.log(`isLogged in error ${e}`);
+     console.log(`login error ${e}`);
+     alert("Correo o contraseña incorrectos");
+   } finally {
+     setIsLoading(false);
    }
-  }
+ };
 
-  useEffect(() =>{
+  const logout = () => {
+    setIsLoading(true);
+    setUserToken(null);
+    setUserInfo(null);
+    AsyncStorage.removeItem('userToken');
+    AsyncStorage.removeItem('userInfo');
+    setIsLoading(false);
+  };
+
+  const isLoggedIn = async() => {
+    try {
+      setIsLoading(true);
+      let userInfo = await AsyncStorage.getItem('userInfo');
+      let userToken = await AsyncStorage.getItem('userToken');
+
+      userInfo = JSON.parse(userInfo);
+
+      if (userInfo) {
+        setUserToken(userToken);
+        setUserInfo(userInfo);
+      }
+
+      setIsLoading(false);
+    } catch (e) {
+      console.log(`isLoggedIn error ${e}`);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     isLoggedIn();
   }, []);
 
   return (
-     <AuthContext.Provider value={{login, logout, isLoading, userToken}}>
-        {children}
-     </AuthContext.Provider>
-  )
-}
+    <AuthContext.Provider value={{login, logout, isLoading, userToken, userInfo, setUserInfo}}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

@@ -1,15 +1,18 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, SafeAreaView } from 'react-native';
 import LogoutIcon from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../../context/AuthContext';
 import MaterialIcons from 'react-native-vector-icons/Feather';
 
 const Perfil = ({ navigation }) => {
-  const { logout } = useContext(AuthContext);
-  const [firstName, setFirstName] = useState('John');
-  const [lastName, setLastName] = useState('Doe');
-  const [experience, setExperience] = useState('5 years');
-  const [avatar, setAvatar] = useState('https://p1.itc.cn/q_70/images03/20230427/97e4cf398c1c453f98f8135b202479d6.jpeg');
+  const { logout, userInfo, setUserInfo } = useContext(AuthContext);
+  const [avatar, setAvatar] = useState(userInfo?.fotoPerfil || 'https://p1.itc.cn/q_70/images03/20230427/97e4cf398c1c453f98f8135b202479d6.jpeg');
+
+  useEffect(() => {
+    if (userInfo) {
+      setAvatar(userInfo.fotoPerfil);
+    }
+  }, [userInfo]);
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -20,13 +23,17 @@ const Perfil = ({ navigation }) => {
 
   const handleEditProfile = () => {
     navigation.navigate('EditarPerfil', { 
-      firstName, 
-      lastName, 
-      avatar, 
+      firstName: userInfo?.nombre, 
+      lastName: userInfo?.apellido, 
+      avatar: userInfo?.fotoPerfil, 
+      id: userInfo?.id,
       onSave: (updatedFirstName, updatedLastName, updatedAvatar) => {
-        setFirstName(updatedFirstName);
-        setLastName(updatedLastName);
-        setAvatar(updatedAvatar);
+        setUserInfo({
+          ...userInfo,
+          nombre: updatedFirstName,
+          apellido: updatedLastName,
+          fotoPerfil: updatedAvatar,
+        });
       }
     });
   };
@@ -38,8 +45,8 @@ const Perfil = ({ navigation }) => {
           <View style={styles.propicArea}>
             <Image source={{ uri: avatar }} style={styles.propic} />
           </View>
-          <Text style={styles.name}>{firstName} {lastName}</Text>
-          <Text style={styles.experience}>Experience: {experience}</Text>
+          <Text style={styles.name}>{userInfo?.nombre} {userInfo?.apellido}</Text>
+          <Text style={styles.experience}>EXP: {userInfo?.exp}</Text>
         </View>
 
         <View style={styles.buttonList}>
@@ -113,10 +120,10 @@ const styles = StyleSheet.create({
   buttonSection: {
     paddingVertical: 10,
     marginBottom: 10,
-    backgroundColor: '#3A3B3C', // Dark button background
+    backgroundColor: '#3A3B3C', 
     borderRadius: 10,
-    elevation: 3, // for Android shadow
-    shadowColor: '#000', // for iOS shadow
+    elevation: 3, 
+    shadowColor: '#000', 
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 10,

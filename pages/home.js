@@ -8,20 +8,9 @@ import Aprender from './subpages/aprender.js';
 import Ayuda from './subpages/ayuda.js';
 import Ranking from './subpages/ranking.js';
 import Perfil from './subpages/perfil.js';
-import axios from 'axios';
 
 const Tab = createBottomTabNavigator();
 
-
-// 使用 axios 从服务器获取数据
-axios.get('http://localhost:8080/hello%20world')
-  .then(response => {
-    console.log(response.data); // 在控制台输出数据
-    // 在这里处理数据，例如更新组件的状态
-  })
-  .catch(error => {
-    console.error('请求失败:', error); // 处理错误
-  });
 
 const HomeScreen = () => {
     return (

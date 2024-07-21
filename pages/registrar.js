@@ -1,10 +1,47 @@
-import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
+import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import EmailIcon from 'react-native-vector-icons/MaterialIcons';
 import PasswordIcon from 'react-native-vector-icons/Feather';
 import PersonIcon from 'react-native-vector-icons/Ionicons';
 
 const Registrar = (props) => {
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  
+  const handleRegister = async () => {
+    try {
+      const response = await fetch('http://192.168.0.4:8080/users/registrar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre,
+          apellido,
+          email,
+          contra: password,
+        }),
+      });
+
+      if (response.ok) {
+        // If registration is successful
+        alert('Listo','Usuario registrado exitosamente');
+        props.navigation.goBack();
+      } else {
+        // If registration fails
+        const errorData = await response.text();
+        setErrorMessage(errorData);
+        alert('Error: ' + errorData);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage('Error de red o servidor');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
@@ -26,6 +63,8 @@ const Registrar = (props) => {
           <TextInput 
             placeholder='Nombre'
             style={styles.input}
+            value={nombre}
+            onChangeText={setNombre}
           />
         </View>
 
@@ -39,6 +78,8 @@ const Registrar = (props) => {
           <TextInput 
             placeholder='Apellido'
             style={styles.input}
+            value={apellido}
+            onChangeText={setApellido}
           />
         </View>
 
@@ -53,6 +94,8 @@ const Registrar = (props) => {
             placeholder='Email ID'
             style={styles.input}
             keyboardType='email-address'
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -67,11 +110,15 @@ const Registrar = (props) => {
             placeholder='Password'
             style={styles.input}
             secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
           />
         </View>
 
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
         <TouchableOpacity 
-          onPress={() => {}} 
+          onPress={handleRegister} 
           style={styles.button}
         >
           <Text style={styles.buttonText}>Registrar</Text>
@@ -86,7 +133,7 @@ const Registrar = (props) => {
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -96,9 +143,11 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     paddingHorizontal: 25,
+    paddingTop: 20, 
   },
   logoContainer: {
     alignItems: 'center',
+    marginTop: -200, 
   },
   logo: {
     width: 100,
@@ -161,6 +210,11 @@ const styles = StyleSheet.create({
     color: '#FFBB3B',
     fontWeight: '700',
     marginLeft: 5,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 10,
   },
 });
 

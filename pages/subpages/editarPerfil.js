@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import ActionSheet from 'react-native-actionsheet';
 
 const EditarPerfil = ({ route, navigation }) => {
-  const { firstName, lastName, avatar, onSave } = route.params;
+  const { firstName, lastName, avatar, onSave ,id} = route.params;
   const [updatedFirstName, setUpdatedFirstName] = useState(firstName);
   const [updatedLastName, setUpdatedLastName] = useState(lastName);
   const [updatedAvatar, setUpdatedAvatar] = useState(avatar);
@@ -96,13 +96,34 @@ const EditarPerfil = ({ route, navigation }) => {
     });
   };
   
-
   const handleSave = () => {
     onSave(updatedFirstName, updatedLastName, updatedAvatar);
-    navigation.goBack();
-    Alert.alert('Guardado', 'Perfil cambiado con éxito!', [
+    const newUserData = {nombre: updatedFirstName,apellido:updatedLastName, fotoPerfil: updatedAvatar, id}
+    fetch("http://192.168.0.4:8080/users/actualizar", {
+      method: 'PUT',
+      headers:{
+        "Content-Type": "application/json"
+      },
+      body:JSON.stringify(newUserData)
+    }).then(resp => {
+      if(resp.ok) {
+        navigation.goBack();
+        Alert.alert('Guardado', 'Perfil cambiado con éxito!', [
+          { text: 'OK' }
+        ]);
+      } else {
+        navigation.goBack();
+        Alert.alert('ERROR', 'hubo un error en el sistema intenta mas tarde', [
       { text: 'OK' }
     ]);
+      }
+    }).catch(err => {
+      navigation.goBack();
+      Alert.alert('ERROR', 'hubo un error en el la red intenta mas tarde ' + err.message, [
+    { text: 'OK' }
+  ]);
+    })
+    
   };
 
   return (
@@ -134,7 +155,7 @@ const EditarPerfil = ({ route, navigation }) => {
       <TextInput
         style={styles.input}
         value={updatedAvatar}
-        onChangeText={setUpdatedFirstName}
+        onChangeText={setUpdatedAvatar}
         placeholder="Ingresa tu nombre"
       />
 
