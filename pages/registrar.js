@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import EmailIcon from 'react-native-vector-icons/MaterialIcons';
 import PasswordIcon from 'react-native-vector-icons/Feather';
 import PersonIcon from 'react-native-vector-icons/Ionicons';
@@ -10,8 +10,18 @@ const Registrar = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  
+
+  const validateEmail = (input) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(input);
+  };
+
   const handleRegister = async () => {
+    if (!validateEmail(email)) {
+      setErrorMessage('Email incorrecto');
+      return;
+    }
+
     try {
       const response = await fetch('http://192.168.0.4:8080/users/registrar', {
         method: 'POST',
@@ -27,14 +37,12 @@ const Registrar = (props) => {
       });
 
       if (response.ok) {
-        // If registration is successful
-        alert('Listo','Usuario registrado exitosamente');
+        Alert.alert('Listo', 'Usuario registrado exitosamente');
         props.navigation.goBack();
       } else {
-        // If registration fails
         const errorData = await response.text();
         setErrorMessage(errorData);
-        alert('Error: ' + errorData);
+        Alert.alert('Error', errorData);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -92,10 +100,12 @@ const Registrar = (props) => {
           />
           <TextInput 
             placeholder='Email ID'
-            style={styles.input}
+            style={[styles.input, !validateEmail(email) && email !== '' && styles.inputError]}
             keyboardType='email-address'
             value={email}
             onChangeText={setEmail}
+            autoCapitalize='none'
+            textContentType='emailAddress'
           />
         </View>
 
@@ -183,6 +193,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 0,
     color: '#000',
+  },
+  inputError: {
+    borderBottomColor: 'red',
   },
   button: {
     backgroundColor: '#FFBB3B',

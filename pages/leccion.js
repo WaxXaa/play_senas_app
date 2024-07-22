@@ -1,17 +1,29 @@
-// pages/Leccion.js
-
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { Video } from 'expo-av';
 import { leccionesData } from '../pages/data/leccion.js';
 
 export default function Leccion({ route, navigation }) {
-  const { theme, leccion } = route.params || {}; 
+  const { theme, leccion } = route.params || {};
+  const video = useRef(null);
+  const [status, setStatus] = useState({});
 
   const leccionData = leccionesData[theme] ? leccionesData[theme][leccion] : [];
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <Text style={styles.title}>Lección {leccion}</Text>
+      <View style={styles.videoContainer}>
+        <Video
+          ref={video}
+          style={styles.video}
+          source={{uri:"http://clips.vorwaert-gmbh.de/big_duck_bunny.mp4"}}
+          useNativeControls
+          resizeMode="contain"
+          isLooping
+          onPlaybackStatusUpdate={status => setStatus(() => status)}
+        />
+      </View>
       <View style={styles.row}>
         {leccionData.map((item, index) => (
           <View key={index} style={styles.itemContainer}>
@@ -38,7 +50,7 @@ export default function Leccion({ route, navigation }) {
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 10,
-    backgroundColor: '#f5f5f5', // Light grey background for the whole page
+    backgroundColor: '#f5f5f5',
   },
   title: {
     fontSize: 24,
@@ -47,8 +59,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
     borderBottomWidth: 2,
-    borderBottomColor: '#007bff', // Border color under the title
+    borderBottomColor: '#007bff',
     paddingBottom: 10,
+  },
+  videoContainer: {
+    width: '100%',
+    height: 300,
+    marginBottom: 20,
+  },
+  video: {
+    flex: 1,
+    alignSelf: 'stretch',
   },
   row: {
     flexDirection: 'row',
@@ -56,25 +77,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   itemContainer: {
-    width: Dimensions.get('window').width / 2 - 20, // Each image will take half of the screen width minus margins
+    width: Dimensions.get('window').width / 2 - 20,
     marginBottom: 20,
-    borderRadius: 10, // Rounded corners for the item container
+    borderRadius: 10,
     borderColor: '#ddd',
     borderWidth: 1,
-    backgroundColor: '#fff', // White background for each item container
-    shadowColor: '#000', // Shadow color for better visual depth
-    shadowOffset: { width: 0, height: 2 }, // Shadow offset
-    shadowOpacity: 0.1, // Shadow opacity
-    shadowRadius: 4, // Shadow radius
-    elevation: 3, // Elevation for Android shadow effect
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   image: {
     width: '100%',
     height: 200,
     resizeMode: 'contain',
-    borderRadius: 10, // Rounded corners for images
-    borderColor: '#FFD700', // Border color for images
-    borderWidth: 2, // Border width for images
+    borderRadius: 10,
+    borderColor: '#FFD700',
+    borderWidth: 2,
   },
   text: {
     fontSize: 16,

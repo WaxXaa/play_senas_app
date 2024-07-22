@@ -11,11 +11,20 @@ import com.facebook.react.ReactHost
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
 class MainApplication : Application(), ReactApplication {
+
+      @Override
+      protected List<ReactPackage> getPackages() {
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        List<ReactPackage> packages = new PackageList(this).getPackages();
+        packages.add(new RNCWebViewPackage());  // Add this line
+        return packages;
+      }
 
   override val reactNativeHost: ReactNativeHost = ReactNativeHostWrapper(
         this,
