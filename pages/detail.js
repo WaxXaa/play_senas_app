@@ -11,6 +11,7 @@ const Detail = ({ route }) => {
     const navigation = useNavigation();
 
     useEffect(() => {
+        console.log("Received ID:", id); // 检查 id 的值
         const fetchData = async () => {
             try {
                 const response = await fetch('http://192.168.0.4:8080/etapas/niveles');
@@ -31,14 +32,15 @@ const Detail = ({ route }) => {
                 setLoading(false);
             }
         };
-
+    
         fetchData();
     }, [id]);
+    
 
     const handleNivelPress = (nivel) => {
         navigation.navigate('Leccion', { 
-            nivelId: nivel.id,
-            nivelesData: niveles // Pasar todos los niveles a la siguiente pantalla
+            id: nivel.id, // 将nivel.id传递给Leccion页面
+            nivelesData: niveles // 将所有niveles数据传递给Leccion页面
         });
     };
 

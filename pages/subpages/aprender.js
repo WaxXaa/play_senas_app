@@ -22,7 +22,6 @@ const Aprender = (props) => {
                 setLoading(false);
             }
         };
-
         fetchData();
     }, []);
 
