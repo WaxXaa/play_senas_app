@@ -99,7 +99,7 @@ const EditarPerfil = ({ route, navigation }) => {
   const handleSave = () => {
     onSave(updatedFirstName, updatedLastName, updatedAvatar);
     const newUserData = {nombre: updatedFirstName,apellido:updatedLastName, fotoPerfil: updatedAvatar, id}
-    fetch("http://192.168.0.4:8080/users/actualizar", {
+    fetch("http://172.20.10.5:8080/users/actualizar", {
       method: 'PUT',
       headers:{
         "Content-Type": "application/json"

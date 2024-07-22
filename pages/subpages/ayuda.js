@@ -1,6 +1,4 @@
-// pages/subpages/ayuda.js
-
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,29 +8,54 @@ import {
   Platform,
   StatusBar,
   TextInput,
+  FlatList,
+  Text,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import RefreshListView from 'react-native-refresh-list-view';
-import ListItem from '../../component/ListItem.js';
-
-import {newsList as initalNewsList} from '../data/pregunta.js';
 
 const ScreenWidth = Dimensions.get('window').width;
-const ScreenHeight = Dimensions.get('window').height;
 
-const Ayuda = ({navigation}) => {
-  const [newsList, setNewsList] = useState(initalNewsList);
+const Ayuda = ({ navigation }) => {
+  const [newsList, setNewsList] = useState([]);
+  const [filteredNewsList, setFilteredNewsList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    fetch('http://172.20.10.5:8080/admin/ayuda')
+      .then(response => response.json())
+      .then(data => {
+        const formattedData = data.map(item => ({
+          title: item.pregunta,
+          desc: item.respuesta,
+        }));
+        setNewsList(formattedData);
+        setFilteredNewsList(formattedData);
+      })
+      .catch(error => {
+        console.error('Error fetching ayuda data:', error);
+      });
+  }, []);
+
   const handleBack = () => navigation.goBack();
+
   const onSubmit = e => {
-    console.log(e.nativeEvent.text);
-    setNewsList(
-      initalNewsList.filter(
-        item =>
-          ~item.title.indexOf(e.nativeEvent.text) ||
-          ~item.desc.indexOf(e.nativeEvent.text),
-      ),
+    const query = e.nativeEvent.text.toLowerCase();
+    setSearchQuery(query);
+    const filteredData = newsList.filter(
+      item =>
+        item.title.toLowerCase().includes(query) ||
+        item.desc.toLowerCase().includes(query),
     );
+    setFilteredNewsList(filteredData);
   };
+
+  const renderItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.desc}>{item.desc}</Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.AndroidSafeArea}>
       <View style={styles.searchContainer}>
@@ -53,15 +76,21 @@ const Ayuda = ({navigation}) => {
             placeholder={'Buscar con palabra clave'}
             returnKeyType="search"
             onSubmitEditing={onSubmit}
+            value={searchQuery}
+            onChangeText={text => setSearchQuery(text)}
           />
         </View>
       </View>
-      <View>
-        <RefreshListView
-          data={newsList.map(item => ({...item, navigation}))}
-          renderItem={ListItem}
-        />
-      </View>
+      <FlatList
+        data={filteredNewsList}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Text style={styles.emptyText}>No se encontraron resultados</Text>
+          </View>
+        }
+      />
     </SafeAreaView>
   );
 };
@@ -72,20 +101,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 15,
-  },
-  spinnerTextStyle: {
-    color: '#FFF',
-  },
-  voice: {
-    marginEnd: 15,
   },
   back: {
     paddingHorizontal: 15,
@@ -107,70 +126,30 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 2,
   },
-  keyWordList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginHorizontal: 15,
+  itemContainer: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
-  keyWordContainer: {
-    backgroundColor: '#0000001A',
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    marginHorizontal: 3,
-    marginVertical: 5,
-  },
-  keyWord: {
-    color: '#00000073',
-    fontSize: 12,
-  },
-  hotSearch: {
+  title: {
     fontSize: 16,
+    fontWeight: 'bold',
     color: '#000',
-    marginLeft: 15,
-    marginTop: 25,
-    marginBottom: 15,
   },
-  searchKey: {
-    alignSelf: 'center',
-    color: '#0000008A',
+  desc: {
     fontSize: 14,
-    fontWeight: 'bold',
-    marginVertical: 20,
-  },
-  searchVideoContainer: {
-    flex: 1,
-    alignContent: 'center',
-    alignItems: 'center',
-  },
-  feedContainer: {
-    width: ScreenWidth,
-    height: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  feed: {
-    width: ScreenWidth,
-    height: 200,
-  },
-  timeContainer: {
-    position: 'absolute',
-    padding: 5,
-    borderRadius: 4,
-    backgroundColor: '#0000008A',
-  },
-  timeText: {
-    fontWeight: 'bold',
-    fontSize: 12,
-    color: '#fff',
+    color: '#555',
+    marginTop: 5,
   },
   empty: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
   },
   emptyText: {
-    marginTop: 5,
+    fontSize: 18,
+    color: '#000',
   },
 });
 

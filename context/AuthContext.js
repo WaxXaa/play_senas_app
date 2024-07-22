@@ -12,7 +12,7 @@ export const AuthProvider = ({children}) => {
    setIsLoading(true);
  
    try {
-     const response = await fetch('http://192.168.0.4:8080/users/login', {
+     const response = await fetch('http://172.20.10.5:8080/users/login', {
        method: 'POST',
        headers: {
          'Content-Type': 'application/json',

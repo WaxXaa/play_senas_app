@@ -1,38 +1,47 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import { Video } from 'expo-av';
-import { leccionesData } from '../pages/data/leccion.js';
 
 export default function Leccion({ route, navigation }) {
-    const { theme, leccion, id } = route.params || {}; // 接收 id
+    const { theme, leccion, id } = route.params || {}; 
     const video = useRef(null);
     const [status, setStatus] = useState({});
+    const [videoUrl, setVideoUrl] = useState('');
+    const [nombre, setNombre] = useState('');
 
-    const leccionData = leccionesData[theme] ? leccionesData[theme][leccion] : [];
-    console.log("Received ID:", id); // 检查 id 的值
+
+    useEffect(() => {
+        fetch(`http://172.20.10.5:8080/etapas/lecciones/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Nombre:', data.nombre);
+                setNombre(data.nombre);
+                setVideoUrl(data.video); 
+            })
+            .catch(error => {
+                console.error('Error fetching lesson data:', error);
+            });
+    }, [id]);
+
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.title}>Lección {leccion}</Text>
+            <Text style={styles.title}>{nombre} {leccion}</Text>
             <View style={styles.videoContainer}>
-                <Video
-                    ref={video}
-                    style={styles.video}
-                    source={{ uri: "https://res.cloudinary.com/dpizfkmea/video/upload/v1721611686/0721_nys5ya.mp4" }}
-                    useNativeControls
-                    resizeMode="contain"
-                    isLooping
-                    onPlaybackStatusUpdate={status => setStatus(() => status)}
-                />
+                {videoUrl ? (
+                    <Video
+                        ref={video}
+                        style={styles.video}
+                        source={{ uri: videoUrl }}
+                        useNativeControls
+                        resizeMode="contain"
+                        isLooping
+                        onPlaybackStatusUpdate={status => setStatus(() => status)}
+                    />
+                ) : (
+                    <Text style={styles.errorText}>Cargando video...</Text>
+                )}
             </View>
-            <View style={styles.row}>
-                {leccionData.map((item, index) => (
-                    <View key={index} style={styles.itemContainer}>
-                        <Text style={styles.text}>
-                            {item.text}
-                        </Text>
-                    </View>
-                ))}
-            </View>
+        
             <TouchableOpacity
                 style={styles.button}
                 onPress={() => navigation.navigate('Nivel', { theme, leccion, id })}

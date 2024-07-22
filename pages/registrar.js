@@ -23,7 +23,7 @@ const Registrar = (props) => {
     }
 
     try {
-      const response = await fetch('http://192.168.0.4:8080/users/registrar', {
+      const response = await fetch('http://172.20.10.5:8080/users/registrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

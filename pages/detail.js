@@ -11,10 +11,10 @@ const Detail = ({ route }) => {
     const navigation = useNavigation();
 
     useEffect(() => {
-        console.log("Received ID:", id); // 检查 id 的值
+        console.log("Received ID:", id);
         const fetchData = async () => {
             try {
-                const response = await fetch('http://192.168.0.4:8080/etapas/niveles');
+                const response = await fetch('http://172.20.10.5:8080/etapas/niveles');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -39,8 +39,8 @@ const Detail = ({ route }) => {
 
     const handleNivelPress = (nivel) => {
         navigation.navigate('Leccion', { 
-            id: nivel.id, // 将nivel.id传递给Leccion页面
-            nivelesData: niveles // 将所有niveles数据传递给Leccion页面
+            id: nivel.id, 
+            nivelesData: niveles 
         });
     };
 

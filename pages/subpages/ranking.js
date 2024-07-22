@@ -11,7 +11,7 @@ const Ranking = (props) => {
     const [selectedUser, setSelectedUser] = useState(null);
 
     const fetchData = () => {
-        fetch(`http://192.168.0.4:8080/Ranking`)
+        fetch(`http://172.20.10.5:8080/Ranking`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

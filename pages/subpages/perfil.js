@@ -13,16 +13,24 @@ const Perfil = ({ navigation }) => {
     const loadUserInfo = async () => {
       try {
         const storedUserInfo = await AsyncStorage.getItem('userInfo');
-        if (storedUserInfo) {
+        
+          fetch("http://172.20.10.5:8080/users/obtenerUsuario/" + userInfo.id).then(res => {
+            return res.json()
+          }).then(data => {
+            setUserInfo(data)
+          }).catch(err => {
           setUserInfo(JSON.parse(storedUserInfo));
+          console.error('Failed to load user info from AsyncStorage:', error);
+          })
         }
-      } catch (error) {
+        
+       catch (error) {
         console.error('Failed to load user info from AsyncStorage:', error);
       }
-    };
+    }
 
     loadUserInfo();
-  }, []);
+  }), [];
 
   useEffect(() => {
     if (userInfo) {

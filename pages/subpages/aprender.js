@@ -10,7 +10,7 @@ const Aprender = (props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://192.168.0.4:8080/etapas/all');
+                const response = await fetch('http://172.20.10.5:8080/etapas/all');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
