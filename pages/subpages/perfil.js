@@ -3,10 +3,26 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, SafeAreaView } 
 import LogoutIcon from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../../context/AuthContext';
 import MaterialIcons from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Perfil = ({ navigation }) => {
   const { logout, userInfo, setUserInfo } = useContext(AuthContext);
-  const [avatar, setAvatar] = useState(userInfo?.fotoPerfil || 'https://p1.itc.cn/q_70/images03/20230427/97e4cf398c1c453f98f8135b202479d6.jpeg');
+  const [avatar, setAvatar] = useState(userInfo?.fotoPerfil);
+
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      try {
+        const storedUserInfo = await AsyncStorage.getItem('userInfo');
+        if (storedUserInfo) {
+          setUserInfo(JSON.parse(storedUserInfo));
+        }
+      } catch (error) {
+        console.error('Failed to load user info from AsyncStorage:', error);
+      }
+    };
+
+    loadUserInfo();
+  }, []);
 
   useEffect(() => {
     if (userInfo) {
@@ -17,7 +33,10 @@ const Perfil = ({ navigation }) => {
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'OK', onPress: () => { logout() }},
+      { text: 'OK', onPress: () => { 
+        logout();
+        AsyncStorage.removeItem('userInfo');
+      }},
     ]);
   };
 
@@ -27,13 +46,19 @@ const Perfil = ({ navigation }) => {
       lastName: userInfo?.apellido, 
       avatar: userInfo?.fotoPerfil, 
       id: userInfo?.id,
-      onSave: (updatedFirstName, updatedLastName, updatedAvatar) => {
-        setUserInfo({
+      onSave: async (updatedFirstName, updatedLastName, updatedAvatar) => {
+        const updatedUserInfo = {
           ...userInfo,
           nombre: updatedFirstName,
           apellido: updatedLastName,
           fotoPerfil: updatedAvatar,
-        });
+        };
+        setUserInfo(updatedUserInfo);
+        try {
+          await AsyncStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
+        } catch (error) {
+          console.error('Failed to save user info to AsyncStorage:', error);
+        }
       }
     });
   };
@@ -45,7 +70,7 @@ const Perfil = ({ navigation }) => {
           <View style={styles.propicArea}>
             <Image source={{ uri: avatar }} style={styles.propic} />
           </View>
-          <Text style={styles.name}>{userInfo?.nombre} {userInfo?.apellido}</Text>
+          <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>{userInfo?.nombre} {userInfo?.apellido}</Text>
           <Text style={styles.experience}>EXP: {userInfo?.exp}</Text>
         </View>
 
@@ -108,6 +133,8 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 32,
     fontWeight: 'bold',
+    marginLeft:30,
+    marginRight:30
   },
   experience: {
     color: '#FFF',
