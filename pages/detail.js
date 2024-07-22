@@ -1,91 +1,159 @@
-// pages/Detail.js
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+const Detail = ({ route }) => {
+    const { id } = route.params;
+    const [details, setDetails] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [niveles, setNiveles] = useState([]);
+    const navigation = useNavigation();
 
-export default function Detail({ navigation, route }) {
     useEffect(() => {
-        navigation.setOptions({
-            headerTitle: route.params.title,
-        });
-    }, [navigation, route.params.title]);
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://192.168.0.4:8080/etapas/niveles');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const result = await response.json();
+                const etapa = result.find(item => item.id === id);
+                if (etapa) {
+                    setDetails(etapa);
+                    setNiveles(Array.isArray(etapa.niveles) ? etapa.niveles : []);
+                } else {
+                    throw new Error('Etapa not found');
+                }
+            } catch (error) {
+                setError(error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const navigateToLeccion = (leccion) => {
-        navigation.navigate('Leccion', {
-            theme: route.params.theme, // 传递 theme
-            leccion
+        fetchData();
+    }, [id]);
+
+    const handleNivelPress = (nivel) => {
+        navigation.navigate('Leccion', { 
+            nivelId: nivel.id,
+            nivelesData: niveles // Pasar todos los niveles a la siguiente pantalla
         });
     };
 
-    return (
-        <View style={styles.container}>
-            <Image
-                style={styles.image}
-                source={route.params.image}
-            />
-
-            <View style={styles.detail}>
-                <Text style={styles.detail_text}>
-                    &#12288;&#12288;{route.params.desc}
-                </Text>
-            </View>
-
-            <View style={styles.buttonContainer}>
-                {[1, 2, 3, 4].map(leccion => (
-                    <TouchableOpacity
-                        key={leccion}
-                        style={styles.button}
-                        onPress={() => navigateToLeccion(leccion)}
-                    >
-                        <Text style={styles.buttonText}>Entrar en Lección {leccion}</Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
-        </View>
+    const renderNivelButton = (nivel) => (
+        <TouchableOpacity
+            key={nivel.id}
+            style={styles.nivelButton}
+            onPress={() => handleNivelPress(nivel)}
+        >
+            <Text style={styles.nivelButtonTitle}>{nivel.nombre}</Text>
+            <Text style={styles.nivelButtonDescription}>{nivel.descripcion}</Text>
+        </TouchableOpacity>
     );
-}
+    
+    if (loading) {
+        return (
+            <SafeAreaView style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#FFBB3B" />
+            </SafeAreaView>
+        );
+    }
+
+    if (error) {
+        return (
+            <SafeAreaView style={styles.errorContainer}>
+                <Text style={styles.errorText}>Error fetching details: {error.message}</Text>
+            </SafeAreaView>
+        );
+    }
+
+    if (!details) {
+        return (
+            <SafeAreaView style={styles.errorContainer}>
+                <Text style={styles.errorText}>No details available</Text>
+            </SafeAreaView>
+        );
+    }
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.headerContainer}>
+                <Text style={styles.title}>{details.nombre}</Text>
+                <Text style={styles.description}>{details.descripcion}</Text>
+            </View>
+            <View style={styles.nivelesContainer}>
+                {niveles.length > 0 ? (
+                    niveles.map(nivel => renderNivelButton(nivel))
+                ) : (
+                    <Text style={styles.noNivelesText}>No niveles available</Text>
+                )}
+            </View>
+        </SafeAreaView>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFF',
-    },
-    image: {
-        width: Dimensions.get('window').width,
-        height: 200,
-    },
-    detail: {
-        alignSelf: 'flex-start',
-        padding: 10,
-    },
-    detail_text: {
-        fontSize: 16,
-        color: '#333333',
-        margin: 6,
-        textAlign: 'justify',
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        marginTop: 20,
-    },
-    button: {
-        backgroundColor: '#FFD700',
+        backgroundColor: '#FFFFFF', // Background color white
         padding: 15,
-        borderRadius: 10,
-        width: '40%',
-        marginVertical: 10,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.3,
-        shadowRadius: 10,
-        elevation: 8,
     },
-    buttonText: {
-        color: '#000',
+    headerContainer: {
+        marginBottom: 20,
+    },
+    title: {
+        fontSize: 28,
         fontWeight: 'bold',
+        color: '#FFBB3B', // Title color orange
+        marginBottom: 5,
+    },
+    description: {
         fontSize: 16,
+        color: '#3A3B3C', // Description color dark gray
+    },
+    nivelesContainer: {
+        flex: 1,
+    },
+    nivelButton: {
+        backgroundColor: '#FFBB3B', // Button color orange
+        borderRadius: 8,
+        padding: 15,
+        marginVertical: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: '#FFBB3B', // Button border color orange
+    },
+    nivelButtonTitle: {
+        fontSize: 18,
+        color: '#FFFFFF', // Button text color white
+        fontWeight: 'bold',
+    },
+    nivelButtonDescription: {
+        fontSize: 14,
+        color: '#FFFFFF', // Button description color white
+        marginTop: 5,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF', // Background color white
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF', // Background color white
+    },
+    errorText: {
+        color: '#FFBB3B', // Error text color orange
+    },
+    noNivelesText: {
+        color: '#3A3B3C', // Text color dark gray
     },
 });
+
+export default Detail;
