@@ -17,7 +17,7 @@ export default function Leccion({ route, navigation }) {
         <Video
           ref={video}
           style={styles.video}
-          source={{uri:"http://clips.vorwaert-gmbh.de/big_duck_bunny.mp4"}}
+          source={{uri:"https://res.cloudinary.com/dpizfkmea/video/upload/v1721611686/0721_nys5ya.mp4"}}
           useNativeControls
           resizeMode="contain"
           isLooping
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     width: '100%',
-    height: 300,
+    height: 200,
     marginBottom: 20,
   },
   video: {

@@ -12,7 +12,6 @@ const Nivel = ({ route, navigation }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleAnswer = (answer) => {
-    // 处理答案的逻辑
     setSelectedOption(answer);
   };
 
