@@ -23,7 +23,7 @@ const Registrar = (props) => {
     }
 
     try {
-      const response = await fetch('http://172.20.10.5:8080/users/registrar', {
+      const response = await fetch('https://play-senas-springboot-api-production.up.railway.app/users/registrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ const Registrar = (props) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
         <View style={styles.logoContainer}>
-          <Image 
+          <Image
             source={require('../imagen/logo.png')}
             style={styles.logo}
           />
@@ -62,13 +62,13 @@ const Registrar = (props) => {
         <Text style={styles.title}>Registrar</Text>
 
         <View style={styles.inputContainer}>
-          <PersonIcon 
-            name='person-outline' 
-            size={20} 
+          <PersonIcon
+            name='person-outline'
+            size={20}
             color='#666'
             style={styles.icon}
           />
-          <TextInput 
+          <TextInput
             placeholder='Nombre'
             style={styles.input}
             value={nombre}
@@ -77,13 +77,13 @@ const Registrar = (props) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <PersonIcon 
-            name='person-outline' 
-            size={20} 
+          <PersonIcon
+            name='person-outline'
+            size={20}
             color='#666'
             style={styles.icon}
           />
-          <TextInput 
+          <TextInput
             placeholder='Apellido'
             style={styles.input}
             value={apellido}
@@ -92,13 +92,13 @@ const Registrar = (props) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <EmailIcon 
-            name='alternate-email' 
-            size={20} 
+          <EmailIcon
+            name='alternate-email'
+            size={20}
             color='#666'
             style={styles.icon}
           />
-          <TextInput 
+          <TextInput
             placeholder='Email ID'
             style={[styles.input, !validateEmail(email) && email !== '' && styles.inputError]}
             keyboardType='email-address'
@@ -110,13 +110,13 @@ const Registrar = (props) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <PasswordIcon 
-            name='lock' 
-            size={20} 
+          <PasswordIcon
+            name='lock'
+            size={20}
             color='#666'
             style={styles.icon}
           />
-          <TextInput 
+          <TextInput
             placeholder='Password'
             style={styles.input}
             secureTextEntry={true}
@@ -127,13 +127,13 @@ const Registrar = (props) => {
 
         {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-        <TouchableOpacity 
-          onPress={handleRegister} 
+        <TouchableOpacity
+          onPress={handleRegister}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Registrar</Text>
         </TouchableOpacity>
-        
+
         <View style={styles.footer}>
           <Text>Ya se registró?</Text>
           <TouchableOpacity onPress={() => props.navigation.goBack()}>
@@ -153,11 +153,11 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     paddingHorizontal: 25,
-    paddingTop: 20, 
+    paddingTop: 20,
   },
   logoContainer: {
     alignItems: 'center',
-    marginTop: -200, 
+    marginTop: -200,
   },
   logo: {
     width: 100,

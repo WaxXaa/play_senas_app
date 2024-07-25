@@ -10,7 +10,7 @@ const Aprender = (props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://172.20.10.5:8080/etapas/all');
+                const response = await fetch('https://play-senas-springboot-api-production.up.railway.app/etapas/all');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -38,8 +38,8 @@ const Aprender = (props) => {
                     </View>
                     <Image
                         style={styles.image}
-                        source={{ uri: item.image_url }}  
-                    />     
+                        source={{ uri: item.image_url }}
+                    />
                 </View>
             </TouchableOpacity>
         );

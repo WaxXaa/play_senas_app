@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from
 import { Video } from 'expo-av';
 
 export default function Leccion({ route, navigation }) {
-    const { theme, leccion, id } = route.params || {}; 
+    const { theme, leccion, id } = route.params || {};
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [videoUrl, setVideoUrl] = useState('');
@@ -11,12 +11,12 @@ export default function Leccion({ route, navigation }) {
 
 
     useEffect(() => {
-        fetch(`http://172.20.10.5:8080/etapas/lecciones/${id}`)
+        fetch(`https://play-senas-springboot-api-production.up.railway.app/etapas/lecciones/${id}`)
             .then(response => response.json())
             .then(data => {
                 console.log('Nombre:', data.nombre);
                 setNombre(data.nombre);
-                setVideoUrl(data.video); 
+                setVideoUrl(data.video);
             })
             .catch(error => {
                 console.error('Error fetching lesson data:', error);
@@ -41,7 +41,7 @@ export default function Leccion({ route, navigation }) {
                     <Text style={styles.errorText}>Cargando video...</Text>
                 )}
             </View>
-        
+
             <TouchableOpacity
                 style={styles.button}
                 onPress={() => navigation.navigate('Nivel', { theme, leccion, id })}

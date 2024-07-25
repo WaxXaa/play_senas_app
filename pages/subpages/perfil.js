@@ -13,18 +13,18 @@ const Perfil = ({ navigation }) => {
     const loadUserInfo = async () => {
       try {
         const storedUserInfo = await AsyncStorage.getItem('userInfo');
-        
-          fetch("http://172.20.10.5:8080/users/obtenerUsuario/" + userInfo.id).then(res => {
-            return res.json()
-          }).then(data => {
-            setUserInfo(data)
-          }).catch(err => {
+
+        fetch("https://play-senas-springboot-api-production.up.railway.app/users/obtenerUsuario/" + userInfo.id).then(res => {
+          return res.json()
+        }).then(data => {
+          setUserInfo(data)
+        }).catch(err => {
           setUserInfo(JSON.parse(storedUserInfo));
           console.error('Failed to load user info from AsyncStorage:', error);
-          })
-        }
-        
-       catch (error) {
+        })
+      }
+
+      catch (error) {
         console.error('Failed to load user info from AsyncStorage:', error);
       }
     }
@@ -41,18 +41,20 @@ const Perfil = ({ navigation }) => {
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'OK', onPress: () => { 
-        logout();
-        AsyncStorage.removeItem('userInfo');
-      }},
+      {
+        text: 'OK', onPress: () => {
+          logout();
+          AsyncStorage.removeItem('userInfo');
+        }
+      },
     ]);
   };
 
   const handleEditProfile = () => {
-    navigation.navigate('EditarPerfil', { 
-      firstName: userInfo?.nombre, 
-      lastName: userInfo?.apellido, 
-      avatar: userInfo?.fotoPerfil, 
+    navigation.navigate('EditarPerfil', {
+      firstName: userInfo?.nombre,
+      lastName: userInfo?.apellido,
+      avatar: userInfo?.fotoPerfil,
       id: userInfo?.id,
       onSave: async (updatedFirstName, updatedLastName, updatedAvatar) => {
         const updatedUserInfo = {
@@ -141,8 +143,8 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 32,
     fontWeight: 'bold',
-    marginLeft:30,
-    marginRight:30
+    marginLeft: 30,
+    marginRight: 30
   },
   experience: {
     color: '#FFF',
@@ -155,10 +157,10 @@ const styles = StyleSheet.create({
   buttonSection: {
     paddingVertical: 10,
     marginBottom: 10,
-    backgroundColor: '#3A3B3C', 
+    backgroundColor: '#3A3B3C',
     borderRadius: 10,
-    elevation: 3, 
-    shadowColor: '#000', 
+    elevation: 3,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 10,

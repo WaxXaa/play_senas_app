@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Dimensions, StyleSheet, Image, TouchableWithoutFeedback, SafeAreaView, ActivityIndicator } from 'react-native';
 import RefreshListView from 'react-native-refresh-list-view';
-import UserPerfil from '../userPerfil.js'; 
+import UserPerfil from '../userPerfil.js';
 
 const Ranking = (props) => {
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
 
     const fetchData = () => {
-        fetch(`http://172.20.10.5:8080/Ranking`)
+        fetch(`https://play-senas-springboot-api-production.up.railway.app/Ranking`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -24,22 +24,22 @@ const Ranking = (props) => {
                     image: { uri: user.fotoPerfil }
                 }));
                 setData(formattedData);
-                setLoading(false); 
+                setLoading(false);
             })
             .catch(error => {
                 setError(error);
-                setLoading(false); 
+                setLoading(false);
             });
     };
 
     useEffect(() => {
-        fetchData(); 
+        fetchData();
 
         const interval = setInterval(() => {
             fetchData();
         }, 1000); // 每秒刷新一次数据
 
-        return () => clearInterval(interval); 
+        return () => clearInterval(interval);
     }, []);
 
     const renderUserItem = ({ item, index }) => (
@@ -140,12 +140,12 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         color: '#000',
-        flex: 1, 
+        flex: 1,
     },
     experience: {
         fontSize: 16,
         color: '#666',
-        marginLeft: 10, 
+        marginLeft: 10,
     },
     headerContainer: {
         padding: 20,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect ,useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Button, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 
@@ -10,17 +10,17 @@ const Nivel = ({ route, navigation }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [correctAnswers, setCorrectAnswers] = useState([]); 
-  const [userAnswers, setUserAnswers] = useState([]); 
+  const [correctAnswers, setCorrectAnswers] = useState([]);
+  const [userAnswers, setUserAnswers] = useState([]);
   id: userInfo?.id
-  const handleexp = async()=> {
-    await fetch("http://172.20.10.5:8080/exp/" + userInfo.id,{
-      method : "PUT"
+  const handleexp = async () => {
+    await fetch("https://play-senas-springboot-api-production.up.railway.app/exp/" + userInfo.id, {
+      method: "PUT"
     })
     navigation.navigate('Home')
   }
   useEffect(() => {
-    fetch(`http://172.20.10.5:8080/preguntas/nivel/${id}`)
+    fetch(`https://play-senas-springboot-api-production.up.railway.app/preguntas/nivel/${id}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -74,7 +74,7 @@ const Nivel = ({ route, navigation }) => {
         <Button title="Reintentar" onPress={() => {
           setLoading(true);
           setError(null);
-          fetch(`http://172.20.10.5:8080/preguntas/nivel/${id}`)
+          fetch(`https://play-senas-springboot-api-production.up.railway.app/preguntas/nivel/${id}`)
             .then(response => {
               if (!response.ok) {
                 throw new Error('Network response was not ok');

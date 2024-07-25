@@ -14,7 +14,7 @@ const Detail = ({ route }) => {
         console.log("Received ID:", id);
         const fetchData = async () => {
             try {
-                const response = await fetch('http://172.20.10.5:8080/etapas/niveles');
+                const response = await fetch('https://play-senas-springboot-api-production.up.railway.app/etapas/niveles');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -32,15 +32,15 @@ const Detail = ({ route }) => {
                 setLoading(false);
             }
         };
-    
+
         fetchData();
     }, [id]);
-    
+
 
     const handleNivelPress = (nivel) => {
-        navigation.navigate('Leccion', { 
-            id: nivel.id, 
-            nivelesData: niveles 
+        navigation.navigate('Leccion', {
+            id: nivel.id,
+            nivelesData: niveles
         });
     };
 
@@ -54,7 +54,7 @@ const Detail = ({ route }) => {
             <Text style={styles.nivelButtonDescription}>{nivel.descripcion}</Text>
         </TouchableOpacity>
     );
-    
+
     if (loading) {
         return (
             <SafeAreaView style={styles.loadingContainer}>

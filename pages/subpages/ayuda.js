@@ -21,7 +21,7 @@ const Ayuda = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetch('http://172.20.10.5:8080/admin/ayuda')
+    fetch('https://play-senas-springboot-api-production.up.railway.app/admin/ayuda')
       .then(response => response.json())
       .then(data => {
         const formattedData = data.map(item => ({

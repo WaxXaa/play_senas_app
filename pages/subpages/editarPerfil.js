@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import ActionSheet from 'react-native-actionsheet';
 
 const EditarPerfil = ({ route, navigation }) => {
-  const { firstName, lastName, avatar, onSave ,id} = route.params;
+  const { firstName, lastName, avatar, onSave, id } = route.params;
   const [updatedFirstName, setUpdatedFirstName] = useState(firstName);
   const [updatedLastName, setUpdatedLastName] = useState(lastName);
   const [updatedAvatar, setUpdatedAvatar] = useState(avatar);
@@ -21,14 +21,14 @@ const EditarPerfil = ({ route, navigation }) => {
       Alert.alert('Permiso requerido', 'Necesitamos permiso para acceder a tu galería de fotos.');
       return;
     }
-  
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-  
+
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       const fileType = uri.split('.').pop();
@@ -42,23 +42,23 @@ const EditarPerfil = ({ route, navigation }) => {
       Alert.alert('No se seleccionó ninguna imagen', 'No seleccionaste ninguna imagen.');
     }
   };
-  
+
   const handleCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permiso requerido', 'Necesitamos permiso para acceder a tu cámara.');
       return;
     }
-  
+
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-  
+
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      const fileType = uri.split('.').pop(); 
+      const fileType = uri.split('.').pop();
       const newfile = {
         uri,
         type: `image/${fileType}`,
@@ -69,44 +69,44 @@ const EditarPerfil = ({ route, navigation }) => {
       Alert.alert('No se capturó ninguna imagen', 'No has capturado ninguna imagen.');
     }
   };
-  
+
 
   const handleUpload = (image) => {
     const formData = new FormData();
     formData.append('file', image);
     formData.append('upload_preset', 'freddy_pan');
-    
+
     fetch("https://api.cloudinary.com/v1_1/dohyqqpyb/image/upload", {
       method: 'POST',
       body: formData,
     })
-    .then(res => res.json())
-    .then(result => {
-      console.log(result);
-      if (result.secure_url) {
-        setUpdatedAvatar(result.secure_url);
-        Alert.alert('Éxito', 'Imagen subida con éxito.');
-      } else {
-        Alert.alert('Error', 'Hubo un problema al subir la imagen.');
-      }
-    })
-    .catch(error => {
-      console.error('Upload error:', error);
-      Alert.alert('Error', `Hubo un error al subir la imagen: ${error.message}`);
-    });
+      .then(res => res.json())
+      .then(result => {
+        console.log(result);
+        if (result.secure_url) {
+          setUpdatedAvatar(result.secure_url);
+          Alert.alert('Éxito', 'Imagen subida con éxito.');
+        } else {
+          Alert.alert('Error', 'Hubo un problema al subir la imagen.');
+        }
+      })
+      .catch(error => {
+        console.error('Upload error:', error);
+        Alert.alert('Error', `Hubo un error al subir la imagen: ${error.message}`);
+      });
   };
-  
+
   const handleSave = () => {
     onSave(updatedFirstName, updatedLastName, updatedAvatar);
-    const newUserData = {nombre: updatedFirstName,apellido:updatedLastName, fotoPerfil: updatedAvatar, id}
-    fetch("http://172.20.10.5:8080/users/actualizar", {
+    const newUserData = { nombre: updatedFirstName, apellido: updatedLastName, fotoPerfil: updatedAvatar, id }
+    fetch("https://play-senas-springboot-api-production.up.railway.app/users/actualizar", {
       method: 'PUT',
-      headers:{
+      headers: {
         "Content-Type": "application/json"
       },
-      body:JSON.stringify(newUserData)
+      body: JSON.stringify(newUserData)
     }).then(resp => {
-      if(resp.ok) {
+      if (resp.ok) {
         navigation.goBack();
         Alert.alert('Guardado', 'Perfil cambiado con éxito!', [
           { text: 'OK' }
@@ -114,16 +114,16 @@ const EditarPerfil = ({ route, navigation }) => {
       } else {
         navigation.goBack();
         Alert.alert('ERROR', 'hubo un error en el sistema intenta mas tarde', [
-      { text: 'OK' }
-    ]);
+          { text: 'OK' }
+        ]);
       }
     }).catch(err => {
       navigation.goBack();
       Alert.alert('ERROR', 'hubo un error en el la red intenta mas tarde ' + err.message, [
-    { text: 'OK' }
-  ]);
+        { text: 'OK' }
+      ]);
     })
-    
+
   };
 
   return (
